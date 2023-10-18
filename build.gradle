@@ -14,6 +14,10 @@ gatling {
   }
 }
 
+dependencies {
+  gatlingImplementation 'org.json4s:json4s-jackson_2.13:4.1.0-M2'
+}
+
 tasks.withType(ScalaCompile) {
   scalaCompileOptions.forkOptions.with {
     jvmArgs = ['-Xss100m'] // Scala compiler may require a larger stack size when compiling Gatling simulations
