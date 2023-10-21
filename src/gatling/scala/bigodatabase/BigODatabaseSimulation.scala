@@ -1,6 +1,6 @@
 package bigodatabase
 
-import bigodatabase.Args.{baseUrl, initialUsersPerSecCount, journeyCountPerUser, loadChangeSecs}
+import bigodatabase.Args.{baseUrls, initialUsersPerSecCount, journeyCountPerUser, loadChangeSecs}
 import bigodatabase.Feeder.{feeder, requests}
 import io.gatling.core.Predef._
 import io.gatling.http.HeaderNames.{Accept, ContentType}
@@ -11,7 +11,7 @@ import scala.concurrent.duration.DurationInt
 
 class BigODatabaseSimulation extends Simulation {
 
-  private val protocol = http.baseUrl(baseUrl)
+  private val protocol = http.baseUrls(baseUrls)
     .header(ContentType, ApplicationJson)
     .header(Accept, ApplicationJson)
 
@@ -24,7 +24,7 @@ class BigODatabaseSimulation extends Simulation {
   setUp(
     scenario("Load Testing")
       .feed(feeder)
-      .repeat(journeyCountPerUser, "userCount")(exec(requests))
+      .exec(requests)
       .inject(rampedUpUserLoad)
       .protocols(protocol)
   ).assertions(

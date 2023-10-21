@@ -1,6 +1,6 @@
 package bigodatabase
 
-import bigodatabase.Args.baseUrl
+import bigodatabase.Args.baseUrls
 import io.gatling.core.Predef.exec
 import io.gatling.core.feeder.FeederBuilderBase
 import io.gatling.core.structure.ChainBuilder
@@ -15,11 +15,16 @@ import scala.util.Random
 
 object Feeder {
 
-  val feeder: FeederBuilderBase[String] = (1 to 100 ).map(feedInput).circular
+  val feeder: FeederBuilderBase[String] = (1 to 1000 ).map(feedInput).circular
 
-  val putProbeData: ChainBuilder = exec(
+  private def getUrl(): String = {
+    val index = Random.between(0, baseUrls.size)
+    baseUrls(index)
+  }
+
+  private val putProbeData: ChainBuilder = exec(
     http("Put Probe Data")
-      .put(s"$baseUrl/probe/" + "${newProbeId}")
+      .put(session => getUrl() + s"/probe/" + session("newProbeId").as[String])
       .body(StringBody(requestBody("${newEventId}", "${newData}")))
       .check(status.is(200))
       .check(jsonPath("$.probeId").is("${newProbeId}"))
@@ -28,9 +33,9 @@ object Feeder {
       .check(jsonPath("$.data").is("${newData}"))
   )
 
-  val getProbeData: ChainBuilder = exec(
+  private val getProbeData: ChainBuilder = exec(
     http("Get Probe Data")
-      .get(s"$baseUrl/probe/" + "${newProbeId}")
+      .get(session => getUrl() + s"/probe/" + session("newProbeId").as[String])
       .check(status.is(200))
       .check(jsonPath("$.probeId").is("${newProbeId}"))
       .check(jsonPath("$.eventReceivedTime").is("${savedEventReceivedTime}"))
