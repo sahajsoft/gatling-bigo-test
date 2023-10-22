@@ -1,6 +1,6 @@
 package bigodatabase
 
-import bigodatabase.Args.{baseUrls, initialUsersPerSecCount, journeyCountPerUser, loadChangeSecs}
+import bigodatabase.Args.{baseUrls, initialUsersPerSecCount, loadChangeSecs}
 import bigodatabase.Feeder.{feeder, requests}
 import io.gatling.core.Predef._
 import io.gatling.http.HeaderNames.{Accept, ContentType}
